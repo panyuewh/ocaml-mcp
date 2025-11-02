@@ -17,12 +17,6 @@ let rec json_to_yojson (json : Jsonrpc.Json.t) : Yojson.Safe.t =
   | `List lst -> `List (List.map json_to_yojson lst)
   | `Null -> `Null
   | `String s -> `String s
-  | `Tuple lst -> `List (List.map json_to_yojson lst)
-  | `Variant (name, opt) -> (
-      match opt with
-      | None -> `Assoc [ ("variant", `String name) ]
-      | Some v ->
-          `Assoc [ ("variant", `String name); ("value", json_to_yojson v) ])
 
 let rec yojson_to_json (yojson : Yojson.Safe.t) : Jsonrpc.Json.t =
   match yojson with
@@ -34,12 +28,6 @@ let rec yojson_to_json (yojson : Yojson.Safe.t) : Jsonrpc.Json.t =
   | `List lst -> `List (List.map yojson_to_json lst)
   | `Null -> `Null
   | `String s -> `String s
-  | `Tuple lst -> `List (List.map yojson_to_json lst)
-  | `Variant (name, arg) -> (
-      match arg with
-      | None -> `Assoc [ ("variant", `String name) ]
-      | Some v ->
-          `Assoc [ ("variant", `String name); ("value", yojson_to_json v) ])
 
 let write_packet (sink : _ Flow.sink) (packet : Jsonrpc.Packet.t) =
   let json = Jsonrpc.Packet.yojson_of_t packet in
